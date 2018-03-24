@@ -47,8 +47,6 @@ void identity_map()
         pgt[j] = __pa((i<<(PGT_BITS+PAGE_BITS)) | (j<<PAGE_BITS) | 7);
       }
       pgt += PGT_ENTR;
-
     }
   }
-
 }
