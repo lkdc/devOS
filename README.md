@@ -1,2 +1,2 @@
 # devOS
-learning about OS
+learning about C programming and OS
