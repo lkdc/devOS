@@ -38,12 +38,6 @@ void identity_map()
   pgd_t *pgd = pgd0;
   pgt_t *pgt;
 
-//  addr pgt_addr;
-//  pgt_addr = (addr)__va(&kernel_end);
-//  pgt_addr = addr_align(PAGE_SIZE,pgt_addr);
-
-//  pgt = (pgt_t*)pgt_addr;
-
   pgt = (pgt_t*)mem_align(PAGE_SIZE,(void*)__va(&kernel_end));
   for(uint32_t i = KPGD_ENTR;
           i < ((uint32_t)__va(zone_normal)>>(PGT_BITS+PAGE_BITS)); i++){
@@ -52,8 +46,6 @@ void identity_map()
       for(uint32_t j = 0; j < PGT_ENTR; j++){
         pgt[j] = __pa((i<<(PGT_BITS+PAGE_BITS)) | (j<<PAGE_BITS) | 7);
       }
-//      pgt_addr += PAGE_SIZE;
-//      pgt = (pgt_t*)pgt_addr;
       pgt += PGT_ENTR;
 
     }
