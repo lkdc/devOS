@@ -10,7 +10,6 @@
 /* The video memory address. */
 #define VIDEO                   0xC00B8000
 
-void* memset(void* dest, uint8_t val, uint32_t sz);
 void clear_scr (void);
 void prints (const char *format, ...);
 

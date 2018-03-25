@@ -17,10 +17,11 @@ SRCDIR = src
 OBJECT_FILES = \
 	$(OBJDIR)/loader.o \
 	$(OBJDIR)/main.o \
+	$(OBJDIR)/system.o \
 	$(OBJDIR)/util.o \
 	$(OBJDIR)/gdt.o \
 	$(OBJDIR)/flush.o \
-	$(OBJDIR)/page.o \
+	$(OBJDIR)/page.o
 
 $(OBJECT_FILES): | $(OBJDIR)
 $(OBJDIR):
@@ -51,10 +52,10 @@ devOS.iso: main.bin
 	rm -rf isofiles
 
 start: devOS.iso
-	qemu-system-x86_64 -s -S -m 258M -cdrom devOS.iso
+	qemu-system-x86_64 -s -S -m 256M -cdrom devOS.iso
 
 run: devOS.iso
-	qemu-system-x86_64 -m 258M -cdrom devOS.iso
+	qemu-system-x86_64 -m 256M -cdrom devOS.iso
 
 .PHONY: clean
 clean:

@@ -11,7 +11,7 @@ extern uint32_t kernel_start;
 extern uint32_t kernel_end;
 extern uint32_t mem_lower;
 extern uint32_t mem_upper;
-extern pgd_t *pgd0;
+extern pgd_t *pg_dir;
 
 void *mem_align(uint32_t count, void *ptr_mem)
 {
@@ -34,7 +34,7 @@ addr addr_align(uint32_t count, addr mem)
 
 void identity_map()
 {
-  pgd_t *pgd = pgd0;
+  pgd_t *pgd = pg_dir;
   pgt_t *pgt;
 
   addr pgt_mem;

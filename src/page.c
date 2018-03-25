@@ -7,12 +7,12 @@
 
 
 
-extern uint32_t kernel_start;
-extern uint32_t kernel_end;
+extern uint32_t _start;
+extern uint32_t _end;
 extern uint32_t mem_lower;
 extern uint32_t mem_upper;
 extern uint32_t zone_normal;
-extern pgd_t *pgd0;
+extern pgd_t *pg_dir;
 
 void *mem_align(uint32_t count, void *ptr_mem)
 {
@@ -35,10 +35,10 @@ addr addr_align(uint32_t count, addr mem)
 
 void identity_map()
 {
-  pgd_t *pgd = pgd0;
+  pgd_t *pgd = pg_dir;
   pgt_t *pgt;
 
-  pgt = (pgt_t*)mem_align(PAGE_SIZE,(void*)__va(&kernel_end));
+  pgt = (pgt_t*)mem_align(PAGE_SIZE,(void*)__va(&_end));
   for(uint32_t i = KPGD_ENTR;
           i < ((uint32_t)__va(zone_normal)>>(PGT_BITS+PAGE_BITS)); i++){
     if (pgd[i] == 0){

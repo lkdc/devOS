@@ -11,28 +11,6 @@ static int ypos;
 /* Point to the video memory. */
 static volatile unsigned char *video;
 
-/*
-void* memcpy(void* dest, const void* src, int count)
-{
-	unsigned char* destC = (unsigned char*)dest;
-	unsigned char* srcC = (unsigned char*)src;
-	int i;
-	for (i = 0; i < count; i++)
-		destC[i] = srcC[i];
-	return dest;
-} */
-
-
-
-void *memset(void* dest, uint8_t val, uint32_t sz)
-{
-		uint8_t *ptr_dest = dest;
-  	for (uint32_t i = 0; i < sz; i++){
-    		ptr_dest[i] = val;
-  	}
-		return dest;
-}
-
 static void itoa(char *buf, int base, int d){
   char *p = buf;
   char *p1, *p2;
