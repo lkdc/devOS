@@ -20,6 +20,7 @@ OBJECT_FILES = \
 	$(OBJDIR)/system.o \
 	$(OBJDIR)/util.o \
 	$(OBJDIR)/gdt.o \
+	$(OBJDIR)/idt.o \
 	$(OBJDIR)/flush.o \
 	$(OBJDIR)/page.o
 

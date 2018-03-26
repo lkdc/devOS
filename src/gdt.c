@@ -5,6 +5,7 @@
 #include "gdt.h"
 
 static gdt_descriptor_t gdt[6] __attribute__((aligned (8)));
+static gdt_ptr_t gdtr __attribute__((aligned (8)));
 extern void gdt_flush(gdt_ptr_t*) __attribute__((cdecl));
 
 // Setup a segment descriptor in the gdt
@@ -22,8 +23,6 @@ static void gdt_setDescriptor(uint32_t idx, uint32_t base, uint32_t limit, uint8
 
 void gdt_install(void)
 {
-  gdt_ptr_t gdtr __attribute__((aligned (8)));
-
   gdtr.limit = (sizeof(gdt_descriptor_t) * 6) - 1;
   gdtr.base  = (uint32_t)&gdt;
   gdt_setDescriptor(0, 0, 0, 0, 0); //null descriptor
@@ -36,4 +35,4 @@ void gdt_install(void)
   gdt_flush(&gdtr);
 }
 
-/* Copyright (c) */
+/* Copyright */

@@ -1,21 +1,21 @@
 .set offset, 0xC0000000
 /* Align all boot modules on i386 page (4KB) boundaries. */
-.set MULTIBOOT_PAGE_ALIGN,		1<<0
+.set MULTIBOOT_PAGE_ALIGN, 1<<0
 /* Must pass memory information to OS. */
-.set MULTIBOOT_MEMORY_INFO,		1<<1
+.set MULTIBOOT_MEMORY_INFO, 1<<1
 /* Must pass video information to OS. */
-.set MULTIBOOT_VIDEO_MODE,		1<<2
+.set MULTIBOOT_VIDEO_MODE, 1<<2
 /* This flag indicates the use of the address fields in the header. */
-.set MULTIBOOT_AOUT_KLUDGE,		1<<16
+.set MULTIBOOT_AOUT_KLUDGE, 1<<16
 
 .set MULTIBOOT_HEADER_FLAGS,			MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO
 .set MULTIBOOT_HEADER_MAGIC,			0x1BADB002
 .set MULTIBOOT_HEADER_CHECKSUM,		-(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 
 .section .text
-.globl start32
-.type start32, @function
-start32:
+.globl start_32
+.type start_32, @function
+start_32:
 	jmp multiboot_entry
 
 .align  4
@@ -31,6 +31,7 @@ multiboot_header:
 .long multiboot_entry
 
 multiboot_entry:
+	cld
 	/* identity-map the kernel in low 4MB memory for ease of transition */
 	movl $boot_pgt-offset+7, boot_pgd-offset		/* set present bit/user r/w */
 	/* but the real place is at offset=0xC0000000 */
@@ -63,6 +64,7 @@ kernel_offset:
 	pushl $0
 	popfl
 	#	push multiboot structure pointer
+	addl $offset, %ebx
 	pushl %ebx
 	#	push page directory pointer
 	movl $boot_pgd, %eax

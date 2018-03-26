@@ -1,7 +1,7 @@
 OUTPUT_FORMAT(elf32-i386)
 OUTPUT_ARCH(i386:i386)
 
-ENTRY(start32)
+ENTRY(start_32)
 SECTIONS{
 	/*located 1 MB + 3GB; will be loaded at 1MB*/
 	. = 0xC0100000;

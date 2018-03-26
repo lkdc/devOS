@@ -6,6 +6,7 @@
 #include "util.h"
 #include "multiboot.h"
 #include "gdt.h"
+#include "idt.h"
 #include "page.h"
 
 uint32_t mem_lower;
@@ -17,14 +18,15 @@ pgd_t	*pg_dir;
 
 void cmain(pgd_t *ptr_pg_dir, multiboot_info_t *ptr_mbi){
 
-	mbi = __va(ptr_mbi);
+	mbi = ptr_mbi;
 	pg_dir = ptr_pg_dir;
 	mem_lower = mbi->mem_lower * 1024;
 	mem_upper = mbi->mem_upper * 1024;
 	if (mem_upper >> 30) zone_normal = KADDR_MAX; else zone_normal = mem_upper;
 
-	gdt_install();
 	identity_map();
+	gdt_install();
+	idt_install();
 	clear_scr ();
 
 	prints ("mem_lower = %u Bytes, mem_upper = %u Bytes\n", mem_lower, mem_upper);

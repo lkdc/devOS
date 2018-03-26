@@ -1,5 +1,5 @@
-#ifndef DESCRIPTOR_TABLES_H_
-#define DESCRIPTOR_TABLES_H_
+#ifndef GDT_H_
+#define GDT_H_
 
 //  Type field
 //  Bits 3:0

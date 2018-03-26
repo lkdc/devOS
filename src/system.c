@@ -32,7 +32,7 @@ char *memset(char *ptr_dest, char val, uint32_t count)
   	for (uint32_t i = 0; i < count; i++){
     		dest[i] = val;
   	}
-		return dest;
+    return dest;
 }
 
 uint16_t *memsetw(uint16_t *ptr_dest, uint16_t val, uint32_t count)
@@ -56,11 +56,11 @@ uint32_t *memsetd(uint32_t *ptr_dest, uint32_t val, uint32_t count)
 
 uint32_t strlen(const char *ptr_str)
 {
-  const char *str = ptr_str;
-  uint32_t count = 0;
-  while(1){
-    if (!str[count]) break;
-    count += 1;
-  }
-  return count;
+    const char *str = ptr_str;
+    uint32_t count = 0;
+    while(1){
+        if (!str[count]) break;
+        count += 1;
+    }
+    return count;
 }
