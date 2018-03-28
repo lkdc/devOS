@@ -21,7 +21,7 @@ OBJECT_FILES = \
 	$(OBJDIR)/util.o \
 	$(OBJDIR)/gdt.o \
 	$(OBJDIR)/idt.o \
-	$(OBJDIR)/flush.o \
+	$(OBJDIR)/asm.o \
 	$(OBJDIR)/page.o
 
 $(OBJECT_FILES): | $(OBJDIR)
@@ -56,7 +56,7 @@ start: devOS.iso
 	qemu-system-x86_64 -s -S -m 256M -cdrom devOS.iso
 
 run: devOS.iso
-	qemu-system-x86_64 -m 256M -cdrom devOS.iso
+	qemu-system-i386 -m 256M -cdrom devOS.iso
 
 .PHONY: clean
 clean:

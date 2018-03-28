@@ -11,6 +11,7 @@
 #define VIDEO                   0xC00B8000
 
 void clear_scr (void);
-void prints (const char *format, ...);
+void printf (const char *format, ...);
+void puts(const char *ptr_str);
 
 #endif

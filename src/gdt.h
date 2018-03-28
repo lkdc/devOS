@@ -75,6 +75,7 @@
     the segment limit is interpreted in 4-KByte units. */
 #define _BYTE_                              0x00
 #define _4KB_                               0x80
+
 // GDT segment descriptor
 typedef struct gdt_descriptor{
   uint16_t limit_low;
@@ -92,6 +93,39 @@ typedef struct gdt_ptr
   uint32_t base;
 } __attribute__((packed)) gdt_ptr_t;
 
+// TSS struct
+typedef struct tss_entry
+{
+   uint32_t prev_tss;
+   uint32_t esp0;       // the stack pointer to load when changing to ring_0
+   uint32_t ss0;        // the stack segment to load when changing to ring_0
+   uint32_t esp1;       // everything below here is unusued
+   uint32_t ss1;
+   uint32_t esp2;
+   uint32_t ss2;
+   uint32_t cr3;
+   uint32_t eip;
+   uint32_t eflags;
+   uint32_t eax;
+   uint32_t ecx;
+   uint32_t edx;
+   uint32_t ebx;
+   uint32_t esp;
+   uint32_t ebp;
+   uint32_t esi;
+   uint32_t edi;
+   uint32_t es;
+   uint32_t cs;
+   uint32_t ss;
+   uint32_t ds;
+   uint32_t fs;
+   uint32_t gs;
+   uint32_t ldt;
+   uint16_t trap;
+   uint16_t iomap_base;
+} __attribute__((packed)) tss_entry_t;
+
 void gdt_install(void);
+void tss_install(void);
 
 #endif

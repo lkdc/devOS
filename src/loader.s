@@ -36,39 +36,39 @@ multiboot_entry:
 	movl $boot_pgt-offset+7, boot_pgd-offset		/* set present bit/user r/w */
 	/* but the real place is at offset=0xC0000000 */
 	movl $boot_pgt-offset+7, boot_pgd-offset+(768*4)	/* set present bit/user r/w */
-	movl $7,%eax
-	movl $boot_pgt-offset, %edi
-	movl $1024, %ecx
+	mov $7,%eax
+	mov $boot_pgt-offset, %edi
+	mov $1024, %ecx
 1:
 	stosl
-	addl $0x1000, %eax
+	add $0x1000, %eax
 	loop 1b
 
-	movl $boot_pgd - offset, %eax
-	movl %eax, %cr3		/* cr3 - page directory start */
-	movl %cr0, %eax
-	orl $0x80000000, %eax
-	movl %eax, %cr0		/* set paging (PG) bit */
-	movl %cr3, %eax
-	movl %eax, %cr3
+	mov $boot_pgd-offset, %eax
+	mov %eax, %cr3		/* cr3 - page directory start */
+	mov %cr0, %eax
+	or $0x80000000, %eax
+	mov %eax, %cr0		/* set paging (PG) bit */
+	mov %cr3, %eax
+	mov %eax, %cr3
 
-	movl $kernel_offset, %eax
-	jmpl *%eax
+	mov $kernel_offset, %eax
+	jmp *%eax
 kernel_offset:
 	movl $0, boot_pgd-offset	/* clear first entry in page dir*/
-	movl $boot_pgd-offset, %eax
+	mov $boot_pgd-offset, %eax
 	invlpg (%eax)
 	# set the stack
-	movl $boot_stack, %esp
+	mov $boot_stack, %esp
 	# clear eflags
-	pushl $0
-	popfl
+	push $0
+	popf
 	#	push multiboot structure pointer
-	addl $offset, %ebx
-	pushl %ebx
+	add $offset, %ebx
+	push %ebx
 	#	push page directory pointer
-	movl $boot_pgd, %eax
-	pushl %eax
+	mov $boot_pgd, %eax
+	push %eax
 	# call "C" main
 	call cmain
 end:
@@ -82,6 +82,13 @@ boot_pgd:
 .skip 0x1000
 boot_pgt:
 .skip 0x1000
+
 # Stack
 .skip 0x4000
 boot_stack:
+.globl tss_stack
+.skip 0x4000
+tss_stack:
+.globl user_stack
+.skip 0x4000
+user_stack:

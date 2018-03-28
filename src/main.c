@@ -15,6 +15,16 @@ uint32_t zone_normal;
 
 multiboot_info_t *mbi;
 pgd_t	*pg_dir;
+extern gdt_ptr_t gdtr;
+extern void jump_user();
+
+void user_function()
+{
+		uint32_t *x;
+		x=0xCF000000;
+		*x = 10;
+		printf ("x=%u\n", *x);
+}
 
 void cmain(pgd_t *ptr_pg_dir, multiboot_info_t *ptr_mbi){
 
@@ -26,13 +36,21 @@ void cmain(pgd_t *ptr_pg_dir, multiboot_info_t *ptr_mbi){
 
 	identity_map();
 	gdt_install();
+	tss_install();
 	idt_install();
+	isr_install();
 	clear_scr ();
 
-	prints ("mem_lower = %u Bytes, mem_upper = %u Bytes\n", mem_lower, mem_upper);
-	prints ("RAM = %u MB\n", (zone_normal+1) / 1024 / 1024);
+	printf ("mem_lower = %u Bytes, mem_upper = %u Bytes\n", mem_lower, mem_upper);
+	printf ("RAM = %u MB\n", (zone_normal+1) / 1024 / 1024);
+
+	jump_user();
 
 
+//	divide0(10);
+//	uint32_t *x;
+//	x=0x0F000000;
+//	*x = 10;
 
 
 
@@ -65,29 +83,29 @@ void cmain(pgd_t *ptr_pg_dir, multiboot_info_t *ptr_mbi){
 *		src[i] = i + (char)65;
 *	}
 *	dest_c = memcpy(dest_c,src, strlen(src));
-*	prints("length_c = %u\n", strlen(dest_c));
-*	prints("%c ", dest_c[i]);
+*	printf("length_c = %u\n", strlen(dest_c));
+*	printf("%c ", dest_c[i]);
 *	for(uint32_t i = 0; i < strlen(dest_c); i++){
 *	}
 *	prints("\n");
 *	dest_c = memset(dest_c, (char)65, strlen(dest_c));
 *	for(uint32_t i = 0; i < strlen(dest_c); i++){
-*			prints("%c ", dest_c[i]);
+*			printf("%c ", dest_c[i]);
 *	}
 *	prints("\n");
 *	for(uint16_t i = 0; i < 10; i++){
 *		dest_w[i] = i+257;
 *	}
-*	prints("length_w = %u\n", strlen((char*)dest_w)/2);
+*	printf("length_w = %u\n", strlen((char*)dest_w)/2);
 *	for(uint32_t i = 0; i < strlen((char*)dest_w)/2; i++){
 *			prints("%u ", dest_w[i]);
 *	}
-*	prints("\n");
+*	printf("\n");
 *	dest_w = memsetw(dest_w, 257, strlen((char*)dest_w)/2);
 *	for(uint32_t i = 0; i < strlen((char*)dest_w)/2; i++){
-*			prints("%u ", dest_w[i]);
+*			printf("%u ", dest_w[i]);
 *	}
-*	prints("\n");
+*	printf("\n");
 */
   for(;;){
 	}

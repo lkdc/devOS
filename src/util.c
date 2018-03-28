@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "system.h"
 #include "util.h"
 
 /* Save the X position. */
@@ -68,7 +69,7 @@ void clear_scr (void){
     ypos = 0;
 }
 
-void prints (const char *format, ...){
+void printf (const char *format, ...){
   char **arg = (char **) &format;
   int c;
   char buf[200];
@@ -114,4 +115,12 @@ void prints (const char *format, ...){
       }
     }
   }
+}
+
+void puts(const char *ptr_str)
+{
+  for(uint32_t i = 0; i < strlen(ptr_str); i++){
+      printf("%c", ptr_str[i]);
+  }
+  printf("\n");
 }
