@@ -37,8 +37,6 @@ void idt_set_gate(uint8_t idx, uint32_t base, uint16_t sel, uint8_t flags)
    idt[idx].base_lo = (base & 0xFFFF);
    idt[idx].base_hi = (base >> 16) & 0xFFFF;
 
-   /* The segment or 'selector' that this IDT entry will use
-   *  is set here, along with any access flags */
    idt[idx].sel = sel;
    idt[idx].always0 = 0;
    idt[idx].flags = flags;
@@ -54,17 +52,6 @@ void idt_install(void)
     idt_load(&idtr);
 }
 
-
-
-/* This is a very repetitive function... it's not hard, it's
-*  just annoying. As you can see, we set the first 32 entries
-*  in the IDT to the first 32 ISRs. We can't use a for loop
-*  for this, because there is no way to get the function names
-*  that correspond to that given entry. We set the access
-*  flags to 0x8E. This means that the entry is present, is
-*  running in ring 0 (kernel level), and has the lower 5 bits
-*  set to the required '14', which is represented by 'E' in
-*  hex. */
 void isr_install()
 {
     idt_set_gate(0, (uint32_t)&isr0, 0x10, 0x8E);
@@ -83,10 +70,10 @@ void isr_install()
     idt_set_gate(13, (uint32_t)&isr13, 0x10, 0x8E);
     idt_set_gate(14, (uint32_t)&isr14, 0x10, 0x8E);
     idt_set_gate(16, (uint32_t)&isr16, 0x10, 0x8E);
-    idt_set_gate(16, (uint32_t)&isr17, 0x10, 0x8E);
-    idt_set_gate(16, (uint32_t)&isr18, 0x10, 0x8E);
-    idt_set_gate(16, (uint32_t)&isr19, 0x10, 0x8E);
-    idt_set_gate(16, (uint32_t)&isr20, 0x10, 0x8E);
+    idt_set_gate(17, (uint32_t)&isr17, 0x10, 0x8E);
+    idt_set_gate(18, (uint32_t)&isr18, 0x10, 0x8E);
+    idt_set_gate(19, (uint32_t)&isr19, 0x10, 0x8E);
+    idt_set_gate(20, (uint32_t)&isr20, 0x10, 0x8E);
 }
 
 const char *exception_messages[31] =
@@ -126,20 +113,10 @@ const char *exception_messages[31] =
 };
 
 
-/* All of our Exception handling Interrupt Service Routines will
-*  point to this function. This will tell us what exception has
-*  happened! Right now, we simply halt the system by hitting an
-*  endless loop. All ISRs disable interrupts while they are being
-*  serviced as a 'locking' mechanism to prevent an IRQ from
-*  happening and messing up kernel data structures */
 void fault_handler(struct regs *r)
 {
-    /* Is this a fault whose number is from 0 to 31? */
     if (r->int_no < 32)
     {
-        /* Display the description for the Exception that occurred.
-        *  In this tutorial, we will simply halt the system using an
-        *  infinite loop */
           puts("Exception!");
           puts(exception_messages[r->int_no]);
     }
