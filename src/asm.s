@@ -2,6 +2,7 @@
 .globl gdt_load
 .type gdt_load, @function
 gdt_load:
+  cli
   movl 4(%esp), %eax  # address of gdtr is send on the stack
   lgdt (%eax)         # load the new gdtr
 
@@ -18,14 +19,15 @@ gdt_flush:
 .globl idt_load
 .type idt_load, @function
 idt_load:
+  cli
   movl 4(%esp), %eax  # address of idtr is send on the stack
   lidt (%eax)         # load the new idtr
   ret
 
-
 .globl tss_flush
 .type tss_flush, @function
 tss_flush:
+  cli
   mov $0x33, %ax    # load the index of our TSS structure - The index is
                     # 0x30, as it is the 6th selector and each is 8 bytes
                     # long, but we set the bottom two bits (making 0x33)
@@ -36,6 +38,7 @@ tss_flush:
 .globl jump_user
 .type jump_user, @function
 jump_user:
+  cli
   mov $0x2B, %ax    # load 0x28 + 3 (RPL ring_3) into the segment selectors
   mov %ax, %ds
   mov %ax, %es
@@ -45,6 +48,9 @@ jump_user:
   push $0x2B        # user data segment with bottom 2 bits set for ring_3
   push %eax         # push our current stack
   pushf
+  pop %eax
+  or $0x200, %eax
+  push %eax
   push $0x23        # user code segment with bottom 2 bits set for ring_3
   push $user_function
   iret
@@ -229,9 +235,7 @@ isr20:
   push $20
   jmp isr_common_stub
 
-
-
-
+.extern isr_handler
 isr_common_stub:
   pusha
   push %ds
@@ -245,7 +249,7 @@ isr_common_stub:
   mov %ax, %gs
   mov %esp, %eax      # push us the stack
   push %eax
-  call fault_handler
+  call isr_handler
   pop %eax
   pop %gs
   pop %fs

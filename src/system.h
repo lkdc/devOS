@@ -1,8 +1,8 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
-char inportb (uint16_t _port);
-void outportb (uint16_t _port, char _data);
+char inb (uint16_t _port);
+void outb (uint16_t _port, char _data);
 void *memcpy(void *ptr_dest, const void *ptr_src, uint32_t count);
 char *memset(char *ptr_dest, char val, uint32_t count);
 uint16_t *memsetw(uint16_t *ptr_dest, uint16_t val, uint32_t count);

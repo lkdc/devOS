@@ -8,7 +8,7 @@
 
 idt_gate_t idt[256] __attribute__((aligned (8)));
 idt_ptr_t idtr __attribute__((aligned (8)));
-extern void idt_load(idt_ptr_t*) __attribute__((cdecl));
+extern void idt_load(idt_ptr_t*);
 
 extern void isr0();
 extern void isr1();
@@ -30,6 +30,23 @@ extern void isr17();
 extern void isr18();
 extern void isr19();
 extern void isr20();
+
+extern void irq0();
+extern void irq1();
+extern void irq2();
+extern void irq3();
+extern void irq4();
+extern void irq5();
+extern void irq6();
+extern void irq7();
+extern void irq8();
+extern void irq9();
+extern void irq10();
+extern void irq11();
+extern void irq12();
+extern void irq13();
+extern void irq14();
+extern void irq15();
 
 void idt_set_gate(uint8_t idx, uint32_t base, uint16_t sel, uint8_t flags)
 {
@@ -76,7 +93,58 @@ void isr_install()
     idt_set_gate(20, (uint32_t)&isr20, 0x10, 0x8E);
 }
 
-const char *exception_messages[31] =
+static inline void iowait(void)
+{
+	asm volatile("jmp 1f\n\t"
+			"1:jmp 2f\n\t"
+			"2:");
+}
+
+void irq_remap(void)
+{
+    outb(0x20, 0x11);
+    iowait();
+    outb(0xA0, 0x11);
+    iowait();
+    outb(0x21, 0x20);
+    iowait();
+    outb(0xA1, 0x28);
+    iowait();
+    outb(0x21, 0x04);
+    iowait();
+    outb(0xA1, 0x02);
+    iowait();
+    outb(0x21, 0x01);
+    iowait();
+    outb(0xA1, 0x01);
+    iowait();
+//    outportb(0x21, 0x0);
+//    outportb(0xA1, 0x0);
+}
+
+void irq_install()
+{
+    irq_remap();
+
+    idt_set_gate(32, (unsigned)irq0, 0x10, 0x8E);
+    idt_set_gate(33, (unsigned)irq1, 0x10, 0x8E);
+    idt_set_gate(34, (unsigned)irq2, 0x10, 0x8E);
+    idt_set_gate(35, (unsigned)irq3, 0x10, 0x8E);
+    idt_set_gate(36, (unsigned)irq4, 0x10, 0x8E);
+    idt_set_gate(37, (unsigned)irq5, 0x10, 0x8E);
+    idt_set_gate(38, (unsigned)irq6, 0x10, 0x8E);
+    idt_set_gate(39, (unsigned)irq7, 0x10, 0x8E);
+    idt_set_gate(40, (unsigned)irq8, 0x10, 0x8E);
+    idt_set_gate(41, (unsigned)irq9, 0x10, 0x8E);
+    idt_set_gate(42, (unsigned)irq10, 0x10, 0x8E);
+    idt_set_gate(43, (unsigned)irq11, 0x10, 0x8E);
+    idt_set_gate(44, (unsigned)irq12, 0x10, 0x8E);
+    idt_set_gate(45, (unsigned)irq13, 0x10, 0x8E);
+    idt_set_gate(46, (unsigned)irq14, 0x10, 0x8E);
+    idt_set_gate(47, (unsigned)irq15, 0x10, 0x8E);
+}
+
+const char *exception_messages[32] =
 {
     "Divide Error",
     "Debug Exception",
@@ -112,13 +180,44 @@ const char *exception_messages[31] =
     "Intel Reserved"
 };
 
+const char *irq_messages[16] =
+{
+    "IRQ 0 - System Timer",
+    "IRQ 1 - Keyboard Controller",
+    "IRQ 2 - Cascade Interrupt for PIC2"
+    "IRQ 3 - Serial Port COM2",
+    "IRQ 4 - Serial Port COM1",
+    "IRQ 5 - Parallel Port 2 / Sound Card",
+    "IRQ 6 - Floppy Disk",
+    "IRQ 7 - Parallel Port 1",
+    "IRQ 8 - RTC",
+    "IRQ 9 - ACPI",
+    "IRQ 10 - Open Interrupt",
+    "IRQ 11 - Open Interrupt",
+    "IRQ 12 - PS/2 Mouse",
+    "IRQ 13 - FPU / Interprocessor Interrupt",
+    "IRQ 14 - Primary ATA",
+    "IRQ 15 - Secondary ATA"
+};
 
-void fault_handler(struct regs *r)
+void isr_handler(struct regs *r)
 {
     if (r->int_no < 32)
     {
-          puts("Exception!");
-          puts(exception_messages[r->int_no]);
+        printf("Exception Nr: %u -> ", r->int_no);
+        printf("%s\n", exception_messages[r->int_no]);
     }
-    for (;;);
+    for (;;){}
+}
+
+void irq_handler(struct regs *r)
+{
+//    r->int_no -= 32;
+    if ((r->int_no >= 32) && (r->int_no < 48)){
+        printf("%s\n", irq_messages[r->int_no - 32]);
+    }
+    if (r->int_no >= 40){
+        outb(0xA0, 0x20);
+    }
+    outb(0x20, 0x20);
 }

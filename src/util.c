@@ -116,11 +116,3 @@ void printf (const char *format, ...){
     }
   }
 }
-
-void puts(const char *ptr_str)
-{
-  for(uint32_t i = 0; i < strlen(ptr_str); i++){
-      printf("%c", ptr_str[i]);
-  }
-  printf("\n");
-}

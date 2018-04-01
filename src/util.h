@@ -12,6 +12,5 @@
 
 void clear_scr (void);
 void printf (const char *format, ...);
-void puts(const char *ptr_str);
 
 #endif

@@ -1,6 +1,9 @@
 #ifndef IDT_H_
 #define IDT_H_
 
+#define ENABLE __asm__ __volatile__ ("sti")
+#define DISABLE __asm__ __volatile__ ("cli")
+
 struct regs
 {
     unsigned int gs, fs, es, ds;      /* pushed the segs last */
@@ -28,7 +31,12 @@ typedef struct idt_ptr
 
 void idt_install(void);
 void idt_set_gate(uint8_t idx, uint32_t base, uint16_t sel, uint8_t flags);
-void fault_handler(struct regs *r);
+void isr_handler(struct regs *r);
 void isr_install(void);
+
+void irq_handler(struct regs *r);
+void irq_remap(void);
+void irq_handler(struct regs *r);
+void irq_install(void);
 
 #endif

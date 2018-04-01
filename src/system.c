@@ -4,16 +4,16 @@
 
 #include "system.h"
 
-char inportb (uint16_t _port)
+char inb (uint16_t _port)
 {
     char rv;
     __asm__ __volatile__ ("inb %1, %0" : "=a" (rv) : "dN" (_port));
     return rv;
 }
 
-void outportb (uint16_t _port, char _data)
+void outb (unsigned short int _port, char _value)
 {
-    __asm__ __volatile__ ("outb %1, %0" : : "dN" (_port), "a" (_data));
+    __asm__ __volatile__ ("outb %1, %0" : : "dN" (_port), "a" (_value));
 }
 
 void *memcpy(void *ptr_dest, const void *ptr_src, uint32_t count)
@@ -52,7 +52,6 @@ uint32_t *memsetd(uint32_t *ptr_dest, uint32_t val, uint32_t count)
     }
     return dest;
 }
-
 
 uint32_t strlen(const char *ptr_str)
 {

@@ -31,6 +31,7 @@ multiboot_header:
 .long multiboot_entry
 
 multiboot_entry:
+	cli
 	cld
 	/* identity-map the kernel in low 4MB memory for ease of transition */
 	movl $boot_pgt-offset+7, boot_pgd-offset		/* set present bit/user r/w */
@@ -70,7 +71,7 @@ kernel_offset:
 	mov $boot_pgd, %eax
 	push %eax
 	# call "C" main
-	call cmain
+	call main
 end:
 	cli
 	hlt
