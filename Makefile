@@ -23,7 +23,10 @@ OBJECT_FILES = \
 	$(OBJDIR)/idt.o \
 	$(OBJDIR)/asm.o \
 	$(OBJDIR)/asmirq.o \
-	$(OBJDIR)/page.o
+	$(OBJDIR)/page.o \
+	$(OBJDIR)/timer.o \
+	$(OBJDIR)/keyboard.o \
+	$(OBJDIR)/scheduler.o
 
 $(OBJECT_FILES): | $(OBJDIR)
 $(OBJDIR):

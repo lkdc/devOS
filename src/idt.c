@@ -5,6 +5,8 @@
 #include "system.h"
 #include "util.h"
 #include "idt.h"
+#include "keyboard.h"
+#include "timer.h"
 
 idt_gate_t idt[256] __attribute__((aligned (8)));
 idt_ptr_t idtr __attribute__((aligned (8)));
@@ -118,8 +120,8 @@ void irq_remap(void)
     iowait();
     outb(0xA1, 0x01);
     iowait();
-//    outportb(0x21, 0x0);
-//    outportb(0xA1, 0x0);
+    outb(0x21, 0x0);
+    outb(0xA1, 0x0);
 }
 
 void irq_install()
@@ -144,7 +146,7 @@ void irq_install()
     idt_set_gate(47, (unsigned)irq15, 0x10, 0x8E);
 }
 
-const char *exception_messages[32] =
+const char *int_messages[] =
 {
     "Divide Error",
     "Debug Exception",
@@ -177,11 +179,7 @@ const char *exception_messages[32] =
     "Intel Reserved",
     "Intel Reserved",
     "Intel Reserved",
-    "Intel Reserved"
-};
-
-const char *irq_messages[16] =
-{
+    "Intel Reserved",
     "IRQ 0 - System Timer",
     "IRQ 1 - Keyboard Controller",
     "IRQ 2 - Cascade Interrupt for PIC2"
@@ -205,19 +203,42 @@ void isr_handler(struct regs *r)
     if (r->int_no < 32)
     {
         printf("Exception Nr: %u -> ", r->int_no);
-        printf("%s\n", exception_messages[r->int_no]);
+        printf("%s\n", int_messages[r->int_no]);
     }
     for (;;){}
 }
 
+static void eoi(uint32_t int_no)
+{
+  if (int_no >= 40){
+      outb(0xA0, 0x20);
+  }
+  outb(0x20, 0x20);
+}
+
+extern struct keyboard_buffer k_buff;
+
 void irq_handler(struct regs *r)
 {
-//    r->int_no -= 32;
-    if ((r->int_no >= 32) && (r->int_no < 48)){
-        printf("%s\n", irq_messages[r->int_no - 32]);
+    switch(r->int_no){
+        case 32:
+            timer_handler();
+            break;
+        case 33:
+            keyboard_handler(&k_buff);
+            break;
+        default:
+            break;
     }
-    if (r->int_no >= 40){
-        outb(0xA0, 0x20);
-    }
-    outb(0x20, 0x20);
+    eoi(r->int_no);
+}
+
+void print_c(struct keyboard_buffer *k_buff)
+{
+  struct keyboard_buffer *x;
+  x = k_buff;
+  if (x->count > 0) {
+    printf("%c", x->key[x->count]);
+    x->count -= 1;
+  }
 }

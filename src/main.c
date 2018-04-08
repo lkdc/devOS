@@ -8,6 +8,7 @@
 #include "gdt.h"
 #include "idt.h"
 #include "page.h"
+#include "keyboard.h"
 
 uint32_t mem_lower;
 uint32_t mem_upper;
@@ -17,17 +18,30 @@ multiboot_info_t *mbi;
 pgd_t	*pg_dir;
 extern gdt_ptr_t gdtr;
 extern void jump_user();
+struct keyboard_buffer k_buff;
+
+void user_proc1()
+{
+	printf("%s","Process1");
+}
+
+void user_proc2()
+{
+	printf("%s","Process2");
+}
 
 void user_function()
 {
-		uint32_t *x;
-		x=(uint32_t*)0xCF100000;
-		*x = 10;
-		printf ("x=%u\n", *x);
-		for(;;){}
+		for(;;)
+		{
+			print_c(&k_buff);
+		}
 }
 
 void main(pgd_t *ptr_pg_dir, multiboot_info_t *ptr_mbi){
+
+	k_buff.count = 0;
+
 
 	mbi = ptr_mbi;
 	pg_dir = ptr_pg_dir;
@@ -47,6 +61,6 @@ void main(pgd_t *ptr_pg_dir, multiboot_info_t *ptr_mbi){
 	printf ("RAM = %u MB\n", (zone_normal+1) / 1024 / 1024);
 
 	jump_user();
-
-  for(;;){}
+	printf ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+  for(;;);
 }
