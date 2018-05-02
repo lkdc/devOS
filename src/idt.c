@@ -146,7 +146,7 @@ void irq_install()
     idt_set_gate(47, (unsigned)irq15, 0x10, 0x8E);
 }
 
-const char *int_messages[] =
+const char *int_messages[48] =
 {
     "Divide Error",
     "Debug Exception",
@@ -208,7 +208,7 @@ void isr_handler(struct regs *r)
     for (;;){}
 }
 
-static void eoi(uint32_t int_no)
+static __inline__ void eoi(uint32_t int_no)
 {
   if (int_no >= 40){
       outb(0xA0, 0x20);
@@ -235,10 +235,10 @@ void irq_handler(struct regs *r)
 
 void print_c(struct keyboard_buffer *k_buff)
 {
-  struct keyboard_buffer *x;
-  x = k_buff;
-  if (x->count > 0) {
-    printf("%c", x->key[x->count]);
-    x->count -= 1;
+  struct keyboard_buffer *buf;
+  buf = k_buff;
+  if (buf->head != buf->tail) {
+    printf("%c", buf->key[buf->tail]);
+    buf->tail = (buf->tail + 1) % 128;
   }
 }

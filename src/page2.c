@@ -47,7 +47,7 @@ void identity_map()
 
 
   pgt = (pgt_t*)pgt_mem;
-  pgd += KERNEL_PGD_ENTR;
+  pgd += K_PGD_ENTR;
 
   while(mem_mem < (addr)__va(mem_upper)){
 

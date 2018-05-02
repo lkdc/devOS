@@ -39,7 +39,7 @@ void identity_map()
   pgt_t *pgt;
 
   pgt = (pgt_t*)mem_align(PAGE_SIZE,(void*)__va(&_end));
-  for(uint32_t i = KPGD_ENTR;
+  for(uint32_t i = K_PGD_ENTR;
           i < ((uint32_t)__va(zone_normal)>>(PGT_BITS+PAGE_BITS)); i++){
     if (pgd[i] == 0){
       pgd[i] = __pa((addr)pgt | 7);

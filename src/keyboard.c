@@ -67,7 +67,8 @@ void keyboard_handler(struct keyboard_buffer *k_buff)
         /* Here, a key was just pressed. Please note that if you
         *  hold a key down, you will get repeated key press
         *  interrupts. */
-        k_buff->count += 1;
-        k_buff->key[k_buff->count] = kb_dus[scancode];
+        k_buff->key[k_buff->head] = kb_dus[scancode];
+        k_buff->head = (k_buff->head + 1) % 128;
+
     }
 }

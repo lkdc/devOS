@@ -17,7 +17,7 @@
 #define __pa(x) ((uint32_t)(x)-PAGE_OFFSET)
 #define __va(x) ((void*)(PAGE_OFFSET+(uint32_t)(x)))
 
-#define KPGD_ENTR (PAGE_OFFSET>>(PGT_BITS+PAGE_BITS))
+#define K_PGD_ENTR (PAGE_OFFSET>>(PGT_BITS+PAGE_BITS))
 
 
 #define KADDR_MAX (((uint32_t)1<<30)-1)

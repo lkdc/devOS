@@ -18,7 +18,7 @@ multiboot_info_t *mbi;
 pgd_t	*pg_dir;
 extern gdt_ptr_t gdtr;
 extern void jump_user();
-struct keyboard_buffer k_buff;
+extern struct keyboard_buffer k_buff;
 
 void user_proc1()
 {
@@ -40,8 +40,8 @@ void user_function()
 
 void main(pgd_t *ptr_pg_dir, multiboot_info_t *ptr_mbi){
 
-	k_buff.count = 0;
-
+	k_buff.head = 0;
+	k_buff.tail = 0;
 
 	mbi = ptr_mbi;
 	pg_dir = ptr_pg_dir;
