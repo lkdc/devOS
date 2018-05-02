@@ -60,7 +60,7 @@ start: devOS.iso
 	qemu-system-i386 -s -S -m 256M -cdrom devOS.iso
 
 run: devOS.iso
-	qemu-system-i386 -m 256M -cdrom /home/lkdc/git/github-repo/devOS.iso
+	qemu-system-i386 -m 128M -cdrom devOS.iso
 
 .PHONY: clean
 clean:
